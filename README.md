@@ -1,52 +1,19 @@
-# pre-tampering-ai
+# Actions speak louder than words. Securing AI Actions
+
+## Preparation
+
+Base env setup. Using `python 3.12` and `UV`.
+
+If you are lucky, a simple 
 
 ```
-# Run with defaults (decision_making scenarios)
-make run-eval
-
-# Run cyber scenarios
-make run-cyber
-
-# Run with custom model and port
-make run-eval MODEL_NAME="your-model" PORT=9000
-
-# Run with custom temperature and output file
-make run-eval SCENARIOS=cyber TEMPERATURE=0.5 OUTPUT_FILE=cyber_results.json
-
-# Override multiple parameters
-make run-eval SCENARIOS=decision_making MODEL_NAME="custom-model" MODEL_PARENT="parent" MAX_TOKENS=1024
+uv sync
 ```
 
-## Prepatarion
+would make your env ready to work.
 
-Base env setup. Using `python 3.12` and `UV` virtual env instead of project to quickly avoid some vllm-pytorch-gcc-cpu/gpu CUDA-OS headaches running it multiplatform. *ToBeImproved*
+If you face some vllm-pytorch-gcc-cpu/gpu-CUDA-OS headaches running it multiplatform, you can follow the `make setup` (or `setup-with-deps` if you face gcc problems, take a look before executing) steps and adapt some commands for your infra setup.
 
-```
-# UV install
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-uv venv --python 3.12 --seed
-
-source .venv/bin/activate
-
-uv pip install vllm --torch-backend=auto
-
-uv pip install datasets peft bitsandbytes trl accelerate flashinfer-python streamlit \
-    jupyterlab ipykernel ipywidgets 
-```
-
-Reproducibility in this kind of programs can be a bit tricky. If you face problems with GCC or python-dev:
-
-```
-sudo apt update
-sudo apt install -y libc6-dev libstdc++-11-dev
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 20
-sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 20
-sudo update-alternatives --set gcc /usr/bin/gcc-11
-sudo update-alternatives --set g++ /usr/bin/g++-11
-
-sudo apt-get update && sudo apt-get install -y python3.12-dev
-```
 
 ## Models
 
@@ -56,13 +23,22 @@ Run in `2xH100`. It should be possible and easy to run it also in 1xH100 or even
 make run-all
 ```
 
-### Qwen3-8B
+### VibeThinker-1.5B
 
-`make run-eval SCENARIOS=decision_making,cyber MODEL_NAME="Qwen/Qwen3-8B" MODEL_PARENT="Qwen3-8B" MAX_MODEL_LEN=17000` 
+`make run-eval SCENARIOS=decision_making,cyber,bio MODEL_NAME="WeiboAI/VibeThinker-1.5B" MODEL_PARENT="WeiboAI/VibeThinker-1.5B" MAX_MODEL_LEN=17000`
 
 Abliterated
 
-`make run-eval SCENARIOS=decision_making,cyber MODEL_NAME="Goekdeniz-Guelmez/Josiefied-Qwen3-8B-abliterated-v1" MODEL_PARENT="Qwen3-8B" MAX_MODEL_LEN=20000` 
+`make run-eval SCENARIOS=decision_making,cyber,bio MODEL_NAME=DavidAU/Qwen2.5-1.5B-VibeThinker-heretic-uncensored-abliterated" MODEL_PARENT="WeiboAI/VibeThinker-1.5B" MAX_MODEL_LEN=17000`
+
+
+### Qwen3-8B
+
+`make run-eval SCENARIOS=decision_making,cyber,bio MODEL_NAME="Qwen/Qwen3-8B" MODEL_PARENT="Qwen3-8B" MAX_MODEL_LEN=17000` 
+
+Abliterated
+
+`make run-eval SCENARIOS=decision_making,cyber,bio MODEL_NAME="Goekdeniz-Guelmez/Josiefied-Qwen3-8B-abliterated-v1" MODEL_PARENT="Qwen3-8B" MAX_MODEL_LEN=20000` 
 
 Step by step:
 `vllm serve Goekdeniz-Guelmez/Josiefied-Qwen3-8B-abliterated-v1 --tensor-parallel-size 1 --gpu-memory-utilization 0.95 --max-model-len 12000 --enable-auto-tool-choice --tool-call-parser hermes`
@@ -72,7 +48,13 @@ Step by step:
 ### Mistral-8B
 
 ```
-make run-eval SCENARIOS=decision-making,cyber,bio MODEL_NAME="mistralai/Ministral-8B-Instruct-2410" MODEL_PARENT="Mistral-8B" TOOL_CALL_PARSER="mistral" LOAD_FORMAT="mistral" CONFIG_FORMAT="mistral" TOKENIZER_MODE="mistral" EXTRA_BODY='{}'
+make run-eval SCENARIOS=decision-making,cyber,bio MODEL_NAME="mistralai/Ministral-8B-Instruct-2410" MODEL_PARENT="Mistral-8B" TOOL_CALL_PARSER="mistral" TOKENIZER_MODE="mistral" EXTRA_BODY='{}'
+``` 
+
+Abliterated
+
+```
+make run-eval SCENARIOS=decision-making,cyber MODEL_NAME="realoperator42/ministral-8B-Instruct-2410-abliterated" MODEL_PARENT="Mistral-8B" TOOL_CALL_PARSER="mistral" TOKENIZER_MODE="mistral" TOKENIZER="mistralai/Ministral-8B-Instruct-2410"  EXTRA_BODY='{}' MAX_MODEL_LEN=32768
 ``` 
 
 Step by step:
@@ -85,6 +67,7 @@ make run-eval SCENARIOS=decision-making,cyber,bio MODEL_NAME="deepseek-ai/DeepSe
 
 vllm serve deepseek-ai/DeepSeek-R1-Distill-Llama-70B
     --enable-auto-tool-choice 
+    --tensor-parallel-size 2
     --tool-call-parser deepseek_v31 
     --max-model-len 4096 --gpu-memory-utilization 0.8 --max-num-batched-tokens 256
 
@@ -97,16 +80,17 @@ vllm serve cerebras/MiniMax-M2-REAP-162B-A10B \
     --trust-remote-code \
     --enable_expert_parallel \
     --enable-auto-tool-choice --gpu-memory-utilization 0.8 --max-model-len 4096  
-### GTP-OSS
+
+### GTP-OSS 120B
 
 ```
-make run-eval SCENARIOS=decision-making,cyber MODEL_NAME="openai/gpt-oss-120b" MODEL_PARENT="gptoss-120B" TOOL_CALL_PARSER="openai" EXTRA_BODY='{}'
+make run-eval SCENARIOS=decision-making,cyber,bio MODEL_NAME="openai/gpt-oss-120b" MODEL_PARENT="gptoss-120B" TOOL_CALL_PARSER="openai" EXTRA_BODY='{}'
 ```
 
 Abliterated
 
 ```
-make run-eval SCENARIOS=decision-making,cyber MODEL_NAME="kldzj/gpt-oss-120b-heretic" MODEL_PARENT="gptoss-120B" TOOL_CALL_PARSER="openai" EXTRA_BODY='{}'
+make run-eval SCENARIOS=decision-making,cyber,bio MODEL_NAME="kldzj/gpt-oss-120b-heretic" MODEL_PARENT="gptoss-120B" TOOL_CALL_PARSER="openai" EXTRA_BODY='{}'
 ```
 
 Step by step:
