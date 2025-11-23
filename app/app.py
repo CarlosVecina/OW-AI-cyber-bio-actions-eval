@@ -18,7 +18,7 @@ st.set_page_config(
     page_title="AI Actions Evaluation Dashboard",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 st.markdown("""
@@ -205,15 +205,17 @@ def format_datetime(dt_str: str) -> str:
 
 
 def main():
-    st.markdown('<h1 class="main-header">📊 Evaluation Runs Dashboard</h1>', unsafe_allow_html=True)
-        
+    st.markdown('<h1 class="main-header">🤖 Actions speak louder than words</h1>', unsafe_allow_html=True)
+    st.markdown('<h2 class="main-subtitle">Open Weights AI Actions evaluation</h2>', unsafe_allow_html=True)
+
+    st.markdown('<p class="main-description">This dashboard provides a comprehensive view of the evaluation runs for Open Weights AI Actions. It allows you to filter and explore the runs by model, scenario type, and other parameters. It also provides a summary of the evaluation results, including the success rate, number of runs, and other statistics.</p> <br>', unsafe_allow_html=True)
     try:
         stats = get_cached_summary_stats(DB_PATH)
     except Exception as e:
         st.error(f"Error loading database: {e}")
         st.stop()
     
-    st.sidebar.header("🔍 Filters Run List")
+    st.sidebar.header("🔍 Filters (Only in Run List View)")
     
     all_runs: list[EvalRun] | None = get_cached_all_runs(DB_PATH, limit=1000)
     unique_models = sorted(set(run.model_name for run in all_runs)) if all_runs else []
@@ -294,7 +296,7 @@ def main():
         #        st.write(f"**Scenario:** {latest['scenario_type']}")
         
         # Add charts for success rate by scenario type
-        st.subheader("Success Rate by Scenario Type")
+        st.subheader("Success Rate (The Bad Guys) by Model and Scenario Type")
         chart_data = process_chart_data(DB_PATH, limit=1000)
         
         if chart_data:
