@@ -217,11 +217,14 @@ def main():
     
     st.sidebar.header("🔍 Filters (Only in Run List View)")
     
+    
     all_runs: list[EvalRun] | None = get_cached_all_runs(DB_PATH, limit=1000)
     unique_models = sorted(set(run.model_name for run in all_runs)) if all_runs else []
     unique_scenarios = sorted(set(run.scenario_type for run in all_runs)) if all_runs else []
     unique_model_parents = sorted(set(run.model_parent for run in all_runs)) if all_runs else []
     
+    st.session_state['selected_run_id'] = 39 # TODO: remove this
+
     selected_model_parent = st.sidebar.selectbox(
         "Model Parent",
         options=[None] + unique_model_parents,
