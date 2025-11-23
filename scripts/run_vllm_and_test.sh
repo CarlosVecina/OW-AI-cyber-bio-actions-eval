@@ -44,6 +44,12 @@ else
     LOAD_FORMAT_FLAG=""
 fi
 
+if [ "$TOKENIZER" != "none" ] && [ -n "$TOKENIZER" ]; then
+    TOKENIZER_FLAG="--tokenizer \"$TOKENIZER\""
+else
+    TOKENIZER_FLAG=""
+fi
+
 # Parse SCENARIOS into an array (support space or comma separated)
 # Convert to array by replacing commas with spaces, then splitting
 SCENARIOS_STR=$(echo "$SCENARIOS" | tr ',' ' ')
@@ -72,6 +78,7 @@ VLLM_CMD="vllm serve \"$MODEL_NAME\" \
     $ENABLE_AUTO_TOOL_CHOICE_FLAG \
     --tool-call-parser \"$TOOL_CALL_PARSER\" \
     $TOKENIZER_MODE_FLAG \
+    $TOKENIZER_FLAG \
     $CONFIG_FORMAT_FLAG \
     $LOAD_FORMAT_FLAG \
     > vllm_server.log 2>&1 &"
