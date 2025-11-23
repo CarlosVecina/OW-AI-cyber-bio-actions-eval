@@ -1,8 +1,15 @@
-# Actions speak louder than words. Securing AI Actions
+# Actions speak louder than words. Evaluating and securing AI Actions
+
+Defensive Acceleration Hackaton.
+
+<p align="center">
+  <img src="https://yt3.googleusercontent.com/a62bOMN7EEnjW0F992zUvj4BBFpHwpfwVpPPbdpSGeQu9s6mw7bE_uqow5AY6NsgVwC0sclyUA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Apart Header" style="max-width: 100%; height: auto;">
+</p>
+
 
 ## Preparation
 
-Base env setup. Using `python 3.12` and `UV`.
+Base env setup using `python 3.12` and `UV`.
 
 If you are lucky, a simple 
 
@@ -12,7 +19,7 @@ uv sync
 
 would make your env ready to work.
 
-If you face some vllm-pytorch-gcc-cpu/gpu-CUDA-OS headaches running it multiplatform, you can follow the `make setup` (or `setup-with-deps` if you face gcc problems, take a look before executing) steps and adapt some commands for your infra setup.
+If you face some vllm-pytorch-gcc-cpu/gpu-CUDA-OS headaches running it multiplatform, you can follow the `make setup` (or `make setup-with-deps` if you face gcc problems, take a look before executing!) steps and adapt some commands for your infra setup.
 
 
 ## Models
@@ -25,7 +32,7 @@ make run-all
 
 ### VibeThinker-1.5B
 
-`make run-eval SCENARIOS=decision_making,cyber,bio MODEL_NAME="WeiboAI/VibeThinker-1.5B" MODEL_PARENT="WeiboAI/VibeThinker-1.5B" MAX_MODEL_LEN=17000`
+`make run-eval SCENARIOS=decision_making,cyber,bio MODEL_NAME="WeiboAI/VibeThinker-1.5B" MODEL_PARENT="WeiboAI/VibeThinker-1.5B" MAX_MODEL_LEN=17000 `
 
 Abliterated
 

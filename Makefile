@@ -1,4 +1,4 @@
-.PHONY: help run-eval run-decision-making run-cyber clean
+.PHONY: setup setup-with-deps help run-eval run-decision-making run-cyber run-all clean
 
 # Default configuration
 MODEL_NAME ?= Goekdeniz-Guelmez/Josiefied-Qwen3-8B-abliterated-v1
@@ -23,10 +23,18 @@ ENFORCE_EAGER ?= false
 CONFIG_FORMAT ?= none
 LOAD_FORMAT ?= none
 TOKENIZER_MODE ?= auto
+TOKENIZER ?= none
 EXTRA_BODY ?= {}
 
-# Construct API base URL
 API_BASE = http://localhost:$(PORT)/v1
+
+setup:
+	@echo "Running setup script..."
+	bash scripts/setup.sh
+
+setup-with-deps:
+	@echo "Running setup script with system dependencies..."
+	bash scripts/setup.sh --install-system-deps
 
 help:
 	@echo "Available targets:"
@@ -48,6 +56,7 @@ help:
 	@echo "  GPU_MEMORY_UTILIZATION  - GPU memory utilization (default: $(GPU_MEMORY_UTILIZATION))"
 	@echo "  MAX_MODEL_LEN           - Max model length (default: $(MAX_MODEL_LEN))"
 	@echo "  TOKENIZER_MODE          - Tokenizer mode (default: $(TOKENIZER_MODE))"
+	@echo "  TOKENIZER               - Tokenizer model path (default: $(TOKENIZER))"
 	@echo "  CONFIG_FORMAT           - Config format (default: $(CONFIG_FORMAT))"
 	@echo "  LOAD_FORMAT             - Load format (default: $(LOAD_FORMAT))"
 
@@ -69,12 +78,13 @@ run-eval:
 	ENABLE_AUTO_TOOL_CHOICE=$(ENABLE_AUTO_TOOL_CHOICE) \
 	TOOL_CALL_PARSER=$(TOOL_CALL_PARSER) \
 	TOKENIZER_MODE=$(TOKENIZER_MODE) \
+	TOKENIZER=$(TOKENIZER) \
 	CONFIG_FORMAT=$(CONFIG_FORMAT) \
 	LOAD_FORMAT=$(LOAD_FORMAT) \
 	SCENARIOS=$(SCENARIOS) \
 	bash scripts/run_vllm_and_test.sh
 #	PYTHON_SCRIPT="scripts/run_eval.py --scenarios $(SCENARIOS) --model-name $(MODEL_NAME) --model-parent $(MODEL_PARENT) --api-base $(API_BASE) --temperature $(TEMPERATURE) --top-p $(TOP_P) --output-file $(OUTPUT_FILE) --extra-body '$(EXTRA_BODY)'" \
-# Convenience targets for specific scenarios
+
 run-decision-making:
 	$(MAKE) run-eval SCENARIOS=decision_making
 
@@ -86,6 +96,7 @@ clean:
 	rm -f vllm_server.log output_eval.json
 
 run-all:
+	make setup-with-deps
 	make run-eval SCENARIOS=decision-making,cyber,bio MODEL_NAME="Qwen/Qwen3-8B" MODEL_PARENT="Qwen3-8B" MAX_MODEL_LEN=17000 TENSOR_PARALLEL_SIZE=2
 	make run-eval SCENARIOS=decision-making,cyber,bio MODEL_NAME="Goekdeniz-Guelmez/Josiefied-Qwen3-8B-abliterated-v1" MODEL_PARENT="Qwen3-8B" MAX_MODEL_LEN=20000 TENSOR_PARALLEL_SIZE=2
 	make run-eval SCENARIOS=decision-making,cyber,bio MODEL_NAME="mistralai/Ministral-8B-Instruct-2410" MODEL_PARENT="Mistral-8B" TOOL_CALL_PARSER="mistral" LOAD_FORMAT="mistral" CONFIG_FORMAT="mistral" TOKENIZER_MODE="mistral" EXTRA_BODY='{}' TENSOR_PARALLEL_SIZE=2
