@@ -6,6 +6,13 @@ Defensive Acceleration Hackaton.
   <img src="https://yt3.googleusercontent.com/a62bOMN7EEnjW0F992zUvj4BBFpHwpfwVpPPbdpSGeQu9s6mw7bE_uqow5AY6NsgVwC0sclyUA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Apart Header" style="max-width: 100%; height: auto;">
 </p>
 
+## Deployed evals
+
+You can find our AI OW tool / MCP usage **main experiment results deployed here:
+https://ow-ai-cyber-bio-actions-eval.streamlit.app/**
+
+<br>
+
 
 ## Preparation
 
@@ -14,7 +21,7 @@ Base env setup using `python 3.12` and `UV`.
 If you are lucky, a simple 
 
 ```
-uv sync
+uv sync --all-groups
 ```
 
 would make your env ready to work.
