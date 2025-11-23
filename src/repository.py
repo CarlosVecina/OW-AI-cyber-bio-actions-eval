@@ -1,6 +1,4 @@
-"""
-Repository for storing and retrieving evaluation runs.
-"""
+# TODO: Move to SQLModel ORM. Funny in an AI security hackathon having this injectable repo LOL.
 import json
 from typing import List, Dict, Any, Optional
 from datetime import datetime
@@ -293,6 +291,16 @@ class EvalRunRepository:
             "by_scenario_type": by_scenario,
             "latest_run": latest_run,
         }
+
+    def remove_eval_run(self, run_id: int):
+        """
+        Remove an evaluation run from the database.
+        """
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM eval_runs WHERE id = ?", (run_id,))
+        conn.commit()
+        return cursor.rowcount
     
     def close(self):
         """Close database connection."""
