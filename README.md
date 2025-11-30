@@ -1,6 +1,10 @@
 # Actions speak louder than words. Evaluating and securing AI Actions
 
-Defensive Acceleration Hackaton.
+Open-weight language models can use external tools, creating new attack risks. Tampered models are much more likely to use these tools harmfully. 
+
+This project gathers evidence, monitor OW models and imagines defences against these threats: Tool usage and MCP security are critical points for defensive intervention.
+
+Defensive Acceleration Hackaton, 2025.
 
 <p align="center">
   <img src="https://yt3.googleusercontent.com/a62bOMN7EEnjW0F992zUvj4BBFpHwpfwVpPPbdpSGeQu9s6mw7bE_uqow5AY6NsgVwC0sclyUA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Apart Header" style="max-width: 100%; height: auto;">
@@ -11,8 +15,28 @@ Defensive Acceleration Hackaton.
 You can find our AI OW tool / MCP usage **main experiment results deployed here:
 https://ow-ai-cyber-bio-actions-eval.streamlit.app/**
 
+![Project Structure](notebooks/project_image.png)
+
 <br>
 
+## Project Structure
+
+```
+📁 OW-AI-cyber-bio-actions-eval/
+├── scripts/                # Evaluation and utility scripts  
+│   └── run_eval.py         # Main evaluation script for running experiments
+├── app/                    # Streamlit dashboard application
+│   └── (Streamlit app files)      
+├── scenarios/              # Evaluation scenarios by domain
+│   ├── decision_making/    
+│   ├── cyber/              
+│   └── bio/                
+├── models/                 # Model configuration and handling <i>(if exists)</i>
+├── data/                   # Evaluation results and database
+├── Makefile                # Build and run commands
+├── pyproject.toml          # Python dependencies (UV package manager)
+└── README.md               # Project documentation
+```
 
 ## Preparation
 
